@@ -1,17 +1,21 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
-// Remember to rename these classes and interfaces!
 
-interface MyPluginSettings {
-	mySetting: string;
+
+interface PomodoroTimerSettings {
+	pomodoroLength: number;
+	shortBreakLength: number;
+	longBreakLength: number;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+const DEFAULT_SETTINGS: PomodoroTimerSettings = {
+	pomodoroLength: 25,
+	shortBreakLength: 5,
+	longBreakLength: 15
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class PomodoroTimerPlugin extends Plugin {
+	settings: PomodoroTimerSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -79,6 +83,9 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
+		// Called when the pomodoro-timer plugin is disabled
+		console.log('Unloading pomodoro-timer plugin');
+		
 
 	}
 
@@ -108,9 +115,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: PomodoroTimerPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: PomodoroTimerPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -121,14 +128,26 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
+			.setName('Setting #firstname')
+			.setDesc('It\'s a first name')
 			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+				.setPlaceholder('Your First Name')
+				.setValue(this.plugin.settings.firstName)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.firstName = value;
 					await this.plugin.saveSettings();
 				}));
+
+		new Setting(containerEl)
+		.setName("Setting #lastname")
+		.setDesc("It's a last name")
+		.addText(async (text) => {
+			text.setPlaceholder('Your Last Name')
+			.setValue(this.plugin.settings.lastName)
+			.onChange(async (value) => {
+				this.plugin.settings.lastName = value;
+				await this.plugin.saveSettings();
+			})
+		})
 	}
 }
