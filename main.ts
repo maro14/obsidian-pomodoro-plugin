@@ -143,27 +143,18 @@ class PomodoroSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
+		containerEl.createEl('h2', {text: 'Pomodoro Timer Settings'});
+
 		new Setting(containerEl)
-			.setName('Setting #firstname')
-			.setDesc('It\'s a first name')
+			.setName('Pomodoro Length')
+			.setDesc('The length of a pomodoro in minutes')
 			.addText(text => text
-				.setPlaceholder('Your First Name')
-				.setValue(this.plugin.settings.firstName)
+				.setPlaceholder('Enter the length of a pomodoro')
+				.setValue(this.plugin.settings.pomodoroLength.toString())
 				.onChange(async (value) => {
-					this.plugin.settings.firstName = value;
+					this.plugin.settings.pomodoroLength = parseInt(value);
 					await this.plugin.saveSettings();
 				}));
 
-		new Setting(containerEl)
-		.setName("Setting #lastname")
-		.setDesc("It's a last name")
-		.addText(async (text) => {
-			text.setPlaceholder('Your Last Name')
-			.setValue(this.plugin.settings.lastName)
-			.onChange(async (value) => {
-				this.plugin.settings.lastName = value;
-				await this.plugin.saveSettings();
-			})
-		})
 	}
 }
