@@ -70,7 +70,7 @@ export default class PomodoroTimerPlugin extends Plugin {
 		});
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new PomodoroSettingTab(this.app, this));
 
 		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// Using this function will automatically remove the event listener when this plugin is disabled.
@@ -96,6 +96,22 @@ export default class PomodoroTimerPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	startPomodoro() {
+		new Notice('Pomodoro started!');
+		setTimeout(() => {
+			new Notice('Pomodoro ended!');
+			this.startBreak();
+		}, this.settings.pomodoroLength * 60 * 1000);
+	}
+
+	startBreak() {
+		new Notice('Break started!');
+		setTimeout(() => {
+			new Notice('Break ended!');
+			this.startPomodoro();
+		}, this.settings.shortBreakLength * 60 * 1000);
+	}
 }
 
 class SampleModal extends Modal {
@@ -114,7 +130,7 @@ class SampleModal extends Modal {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
+class PomodoroSettingTab extends PluginSettingTab {
 	plugin: PomodoroTimerPlugin;
 
 	constructor(app: App, plugin: PomodoroTimerPlugin) {
