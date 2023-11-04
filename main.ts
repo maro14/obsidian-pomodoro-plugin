@@ -20,11 +20,11 @@ export default class PomodoroTimerPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+		// This creates an icon in the left ribbon for pomodoro time.
+		const ribbonIconEl = this.addRibbonIcon('timer', 'Pomodoro Timer', () => {
+			new Notice('This is from pomodoro timer!');
 		});
+
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
 
@@ -47,6 +47,22 @@ export default class PomodoroTimerPlugin extends Plugin {
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				console.log(editor.getSelection());
 				editor.replaceSelection('Sample Editor Command');
+			}
+		});
+
+		this.addCommand({
+			id: 'start-pomodoro',
+			name: 'Start pomodoro',
+			callback: () => {
+				this.startPomodoro();
+			}	
+		})
+
+		this.addCommand({
+			id: 'start-break',
+			name: 'Start break',
+			callback: () => {
+				this.startBreak();
 			}
 		});
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
