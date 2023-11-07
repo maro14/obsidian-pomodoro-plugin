@@ -1,13 +1,13 @@
 import { App, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 
-
 interface PomodoroTimerSettings {
 	pomodoroLength: number;
 	shortBreakLength: number;
 	longBreakLength: number;
 	resetPomodoro: boolean;
 	endPomodoro: boolean;
+	pomoTimeout: null;
 }
 
 const DEFAULT_SETTINGS: PomodoroTimerSettings = {
@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS: PomodoroTimerSettings = {
 	longBreakLength: 15,
 	resetPomodoro: false,
 	endPomodoro: false,
+	pomoTimeout: null,
 }
 
 export default class PomodoroTimerPlugin extends Plugin {
@@ -23,7 +24,6 @@ export default class PomodoroTimerPlugin extends Plugin {
 	public pomodoroLength: number;
 	public shortBreakLength: number;
 	public longBreakLength: number;
-
 	public pomodoroTImeout: null;
 
 
@@ -32,7 +32,6 @@ export default class PomodoroTimerPlugin extends Plugin {
 
 		// This creates an icon in the left ribbon for pomodoro time.
 		const pomodoroIconEl = this.addRibbonIcon('clock', 'Pomodoro Timer', () => {
-			new Notice('The pomdomoro timer has been started!');
 			this.startPomodoro();
 		});
 
@@ -43,7 +42,7 @@ export default class PomodoroTimerPlugin extends Plugin {
 		const statusBarItemEl = this.addStatusBarItem();
 		statusBarItemEl.setText('Status Bar Text');
 
-		// This adds an editor command that can perform some operation on the current editor instance
+		// This adds a command to the command palette.
 		this.addCommand({
 			id: 'start-pomodoro',
 			name: 'Start pomodoro',
@@ -72,18 +71,19 @@ export default class PomodoroTimerPlugin extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new PomodoroSettingTab(this.app, this));
 
-
 	}
 
 	onunload() {
 		// Called when the pomodoro-timer plugin is disabled
 		console.log('Unloading pomodoro-timer plugin');
 		
-
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+
+		this.settings = Object.assign({}, 
+			DEFAULT_SETTINGS, 
+			await this.loadData());
 	}
 
 	async saveSettings() {
@@ -95,6 +95,10 @@ export default class PomodoroTimerPlugin extends Plugin {
 		setTimeout(() => {
 			new Notice('Pomodoro ended!');
 			this.startBreak();
+			if (this.pomodoroTImeout != null) {
+				this.clearTimeout();
+			}
+			this.pomodoroTImeout = null;
 		}, this.settings.pomodoroLength * 60 * 1000);
 	}
 
@@ -127,6 +131,10 @@ export default class PomodoroTimerPlugin extends Plugin {
 				this.startPomodoro
 			}
 		}, this.settings.longBreakLength * 60 * 1000);
+	}
+
+	clearTimeout() {
+		this.pomodoroTImeout = null;
 	}
 
 }

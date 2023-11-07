@@ -2,7 +2,7 @@
 	"id": "pomodoro-timer-plugin",
 	"name": "Pomodoro Timer Plugin",
 	"version": "1.0.1",
-	"minAppVersion": "0.15.0",
+	"minAppVersion": "1.0.0",
 	"description": "This is a Pomodoro Timer plugin for Obsidian. It helps manage your time by breaking it down into periods of work and rest.",
 	"author": "Teheskhiel Fritz",
 	"authorUrl": "https://obsidian.md",
