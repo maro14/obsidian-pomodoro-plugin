@@ -7,7 +7,6 @@ interface PomodoroTimerSettings {
 	longBreakLength: number;
 	resetPomodoro: boolean;
 	endPomodoro: boolean;
-	pomoTimeout: null;
 }
 
 const DEFAULT_SETTINGS: PomodoroTimerSettings = {
@@ -16,7 +15,6 @@ const DEFAULT_SETTINGS: PomodoroTimerSettings = {
 	longBreakLength: 15,
 	resetPomodoro: false,
 	endPomodoro: false,
-	pomoTimeout: null,
 }
 
 export default class PomodoroTimerPlugin extends Plugin {
@@ -24,7 +22,7 @@ export default class PomodoroTimerPlugin extends Plugin {
 	public pomodoroLength: number;
 	public shortBreakLength: number;
 	public longBreakLength: number;
-	public pomodoroTImeout: null;
+	public pomodoroTimeout: NodeJS.Timeout | null = null;
 
 
 	async onload() {
@@ -37,10 +35,6 @@ export default class PomodoroTimerPlugin extends Plugin {
 
 		// Perform additional things with the ribbon
 		pomodoroIconEl.addClass('my-ribbon-icon');
-
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
 
 		// This adds a command to the command palette.
 		this.addCommand({
@@ -91,14 +85,18 @@ export default class PomodoroTimerPlugin extends Plugin {
 	}
 
 	startPomodoro() {
+		if (this.settings.endPomodoro) {
+			new Notice('Pomodoro already ended!');
+		}
+
 		new Notice('Pomodoro started!');
-		setTimeout(() => {
+
+		this.pomodoroTimeout = setTimeout(() => {
 			new Notice('Pomodoro ended!');
+			this.settings.endPomodoro = true;
+			this.saveSettings();
+
 			this.startBreak();
-			if (this.pomodoroTImeout != null) {
-				this.clearTimeout();
-			}
-			this.pomodoroTImeout = null;
 		}, this.settings.pomodoroLength * 60 * 1000);
 	}
 
@@ -133,9 +131,6 @@ export default class PomodoroTimerPlugin extends Plugin {
 		}, this.settings.longBreakLength * 60 * 1000);
 	}
 
-	clearTimeout() {
-		this.pomodoroTImeout = null;
-	}
 
 }
 
