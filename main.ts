@@ -33,12 +33,15 @@ export default class PomodoroTimerPlugin extends Plugin {
 			this.startPomodoro();
 		});
 
-		const stopPomodoroIcon = this.addRibbonIcon('cross', 'Stop Pomodoro', () => {});
+		const stopPomodoroIcon = this.addRibbonIcon('cross', 'Stop Pomodoro', () => {
+			this.stopPomodoro();
+		});
 		
 		startPomodoroIcon.addClass('pomodoro-timer-start');
+		stopPomodoroIcon.addClass('pomodoro-timer-stop');
 
 		if (this.settings.endPomodoro) {
-			startPomodoroIcon.addClass('pomodoro-timer-end');
+			this.stopPomodoro();
 		}
 
 		// This adds a command to the command palette.
@@ -51,6 +54,14 @@ export default class PomodoroTimerPlugin extends Plugin {
 			}	
 		})
 
+		this.addCommand({
+			id: 'stop-pomodoro',
+			name: 'Stop pomodoro',
+			callback: () => {
+				this.stopPomodoro();
+			}
+		})
+		
 		this.addCommand({
 			id: 'start-break',
 			name: 'Start break',
@@ -105,6 +116,15 @@ export default class PomodoroTimerPlugin extends Plugin {
 		}, this.settings.pomodoroLength * 60 * 1000);
 	}
 
+	stopPomodoro() {
+		if (this.pomodoroTimeout != null) {
+			clearTimeout(this.pomodoroTimeout);
+			this.settings.endPomodoro = true;
+			this.saveSettings();
+			new Notice('Pomodoro stopped!');
+		}
+	}
+
 	startBreak() {
 		new Notice('Break started!');
 		setTimeout(() => {
@@ -113,14 +133,6 @@ export default class PomodoroTimerPlugin extends Plugin {
 		}, this.settings.shortBreakLength * 60 * 1000);
 	}
 
-	resetPomodoro() {
-		new Notice('Pomodoro reset!');
-		this.settings.resetPomodoro = true;
-		setTimeout(() => {
-			this.settings.resetPomodoro = false;
-			this.startPomodoro();
-		}, 5000);
-	}
 
 	//create a function that will reset the long break timer
 	longBreak() {
@@ -136,6 +148,14 @@ export default class PomodoroTimerPlugin extends Plugin {
 		}, this.settings.longBreakLength * 60 * 1000);
 	}
 
+	resetPomodoro() {
+		new Notice('Pomodoro reset!');
+		this.settings.resetPomodoro = true;
+		setTimeout(() => {
+			this.settings.resetPomodoro = false;
+			this.startPomodoro();
+		}, 5000);
+	}
 
 }
 
