@@ -10,7 +10,7 @@ interface PomodoroTimerSettings {
 }
 
 const DEFAULT_SETTINGS: PomodoroTimerSettings = {
-	pomodoroLength: 25,
+	pomodoroLength: 1,
 	shortBreakLength: 5,
 	longBreakLength: 15,
 	resetPomodoro: false,
@@ -29,12 +29,17 @@ export default class PomodoroTimerPlugin extends Plugin {
 		await this.loadSettings();
 
 		// This creates an icon in the left ribbon for pomodoro time.
-		const pomodoroIconEl = this.addRibbonIcon('clock', 'Pomodoro Timer', () => {
+		const startPomodoroIcon = this.addRibbonIcon('clock', 'Pomodoro Timer', () => {
 			this.startPomodoro();
 		});
 
-		// Perform additional things with the ribbon
-		pomodoroIconEl.addClass('my-ribbon-icon');
+		const stopPomodoroIcon = this.addRibbonIcon('cross', 'Stop Pomodoro', () => {});
+		
+		startPomodoroIcon.addClass('pomodoro-timer-start');
+
+		if (this.settings.endPomodoro) {
+			startPomodoroIcon.addClass('pomodoro-timer-end');
+		}
 
 		// This adds a command to the command palette.
 		this.addCommand({
