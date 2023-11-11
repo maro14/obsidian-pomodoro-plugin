@@ -49,8 +49,11 @@ export default class PomodoroTimerPlugin extends Plugin {
 			id: 'start-pomodoro',
 			name: 'Start pomodoro',
 			callback: () => {
-				this.resetPomodoro();
+				this.resetPomodoro()
 				this.startPomodoro();
+				if (this.settings.endPomodoro) {
+					new Notice('Pomodoro already ended!');
+				}
 			}	
 		})
 
