@@ -52,6 +52,7 @@ export default class PomodoroTimerPlugin extends Plugin {
 				this.resetPomodoro()
 				this.startPomodoro();
 				if (this.settings.endPomodoro) {
+					this.stopPomodoro();
 					new Notice('Pomodoro already ended!');
 				}
 			}	
@@ -146,7 +147,7 @@ export default class PomodoroTimerPlugin extends Plugin {
 			if (this.settings.resetPomodoro == true) {
 				this.resetPomodoro();
 			} else {
-				this.startPomodoro
+				this.startPomodoro();
 			}
 		}, this.settings.longBreakLength * 60 * 1000);
 	}
