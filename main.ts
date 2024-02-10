@@ -123,15 +123,15 @@ export default class PomodoroTimerPlugin extends Plugin {
 		}, this.settings.pomodoroLength * 60 * 1000);
 	}
 
-	//create a function that will stop the pomodoro timer
-	stopPomodoro() {
-		if (this.pomodoroTimeout != null) {
-			clearTimeout(this.pomodoroTimeout);
-			this.settings.endPomodoro = true;
-			this.saveSettings();
-			new Notice('Pomodoro stopped!');
-		}
-	}
+    //create a function that will stop the pomodoro timer
+    stopPomodoro() {
+        if (this.pomodoroTimeout) {
+            clearTimeout(this.pomodoroTimeout);
+            this.settings.endPomodoro = true;
+            this.saveSettings();
+            new Notice('Pomodoro stopped!');
+        }
+    }
 
 	//create a function that will reset the short break timer
 	startBreak() {
@@ -157,15 +157,18 @@ export default class PomodoroTimerPlugin extends Plugin {
 		}, this.settings.longBreakLength * 60 * 1000);
 	}
 
-	//create a function that will reset the pomodoro timer
-	resetPomodoro() {
-		new Notice('Pomodoro reset!');
-		this.settings.resetPomodoro = true;
-		setTimeout(() => {
-			this.settings.resetPomodoro = false;
-			this.startPomodoro();
-		}, 5000);
+    //create a function that will reset the pomodoro timer
+resetPomodoro() {
+	new Notice('Pomodoro reset!');
+	this.settings.resetPomodoro = true;
+	if (this.pomodoroTimeout) {
+		clearTimeout(this.pomodoroTimeout); // Clear existing pomodoro timeout
 	}
+	this.saveSettings(); // Save the updated settings
+	this.pomodoroTimeout = setTimeout(() => {
+		this.settings.resetPomodoro = false;
+		this.startPomodoro();
+	}, 5000);
 
 }
 
