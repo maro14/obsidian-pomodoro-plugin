@@ -1,12 +1,12 @@
 /* Custom styling for pomodoro-timer-start */
 .ribbon-icon.promodoro-timer-start {
-	color: green;
-	font-size: 24px;;
+    color: green;
+    font-size: 24px;;
 }
 
 .ribbon-icon.promodoro-timer-start:hover {
-	color: greenyellow;
-	background-color: greenyellow;
+    color: greenyellow;
+    background-color: greenyellow;
 }
 
 .ribbon-icon.pomodoro-timer-stop {
